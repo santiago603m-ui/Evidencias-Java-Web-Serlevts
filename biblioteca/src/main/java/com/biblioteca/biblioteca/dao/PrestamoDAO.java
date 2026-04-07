@@ -5,6 +5,7 @@ import com.biblioteca.biblioteca.util.ConexionDB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class PrestamoDAO {
 
@@ -61,7 +62,9 @@ public class PrestamoDAO {
                 rs.getInt("id_usuario"),
                 rs.getInt("id_libro"),
                 rs.getDate("fecha_prestamo"),
+                rs.getDate("fecha_devolucion_esperada"),
                 rs.getDate("fecha_devolucion"),
+                rs.getDouble("multa"),
                 rs.getString("estado"),
                 rs.getString("nombre_usuario"),
                 rs.getString("titulo_libro")
@@ -69,13 +72,19 @@ public class PrestamoDAO {
     }
 
     public boolean crear(Prestamo p) {
-        String sql = "INSERT INTO prestamos (id_usuario, id_libro, fecha_prestamo, estado) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO prestamos (id_usuario, id_libro, fecha_prestamo, fecha_devolucion_esperada, multa, estado) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection con = ConexionDB.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            LocalDate hoy = LocalDate.now();
+            LocalDate esperada = hoy.plusDays(8);
+
             ps.setInt(1, p.getIdUsuario());
             ps.setInt(2, p.getIdLibro());
-            ps.setDate(3, p.getFechaPrestamo());
-            ps.setString(4, "ACTIVO");
+            ps.setDate(3, Date.valueOf(hoy));
+            ps.setDate(4, Date.valueOf(esperada));
+            ps.setDouble(5, 0.0);
+            ps.setString(6, "ACTIVO");
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

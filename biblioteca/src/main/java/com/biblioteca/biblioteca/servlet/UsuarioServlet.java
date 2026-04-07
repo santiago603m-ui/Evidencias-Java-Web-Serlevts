@@ -44,6 +44,26 @@ public class UsuarioServlet extends HttpServlet {
                 request.setAttribute("error", "Credenciales incorrectas");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
+        } else if ("registrar".equals(accion)) {
+            String nombre = request.getParameter("txtNombre");
+            String correo = request.getParameter("txtCorreo");
+            String clave = request.getParameter("txtPass");
+
+            Usuario nuevoUsuario = new Usuario();
+            nuevoUsuario.setNombre(nombre);
+            nuevoUsuario.setCorreo(correo);
+            nuevoUsuario.setPassword(clave);
+            nuevoUsuario.setRol("ESTUDIANTE");
+
+            boolean insertado = usuarioDAO.crear(nuevoUsuario);
+
+            if (insertado) {
+                request.setAttribute("mensaje", "Registro exitoso. Ya puedes iniciar sesión.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error", "No se pudo completar el registro. El correo podría estar en uso.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            }
         }
     }
 }

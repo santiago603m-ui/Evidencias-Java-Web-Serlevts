@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `biblioteca_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `biblioteca_db`;
--- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
 -- Host: localhost    Database: biblioteca_db
 -- ------------------------------------------------------
--- Server version	8.0.45
+-- Server version	8.0.43
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -30,7 +30,7 @@ CREATE TABLE `libros` (
   `autor` varchar(100) NOT NULL,
   `disponibles` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_libro`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `libros` (
 
 LOCK TABLES `libros` WRITE;
 /*!40000 ALTER TABLE `libros` DISABLE KEYS */;
-INSERT INTO `libros` VALUES (1,'Cien Años de Soledad','Gabriel Garcia Marquez',4),(2,'Don Quijote de la Mancha','Miguel de Cervantes',3),(3,'La Odisea','Homero',4),(4,'El Principito','Antoine de Saint-Exupery',6),(5,'1984','George Orwell',2),(6,'Fahrenheit 451','Ray Bradbury',3),(7,'Crimen y Castigo','Fiodor Dostoyevski',2),(8,'Orgullo y Prejuicio','Jane Austen',4),(9,'Moby Dick','Herman Melville',3),(10,'Hamlet','William Shakespeare',5),(11,'El Alquimista','Paulo Coelho',7),(12,'La Divina Comedia','Dante Alighieri',2),(13,'El Hobbit','J.R.R. Tolkien',6),(14,'Harry Potter 1','J.K. Rowling',8),(15,'Los Juegos del Hambre','Suzanne Collins',5),(16,'El Codigo Da Vinci','Dan Brown',4),(17,'La Sombra del Viento','Carlos Ruiz Zafon',3),(18,'Dracula','Bram Stoker',2),(19,'It','Stephen King',3),(20,'El Resplandor','Stephen King',4);
+INSERT INTO `libros` VALUES (1,'Cien AÃ±os de Soledad','Gabriel Garcia Marquez',8),(2,'Don Quijote de la Mancha','Miguel de Cervantes',2),(3,'La Odisea','Homero',5),(4,'El Principito','Antoine de Saint-Exupery',6),(5,'1984','George Orwell',2),(6,'Fahrenheit 451','Ray Bradbury',3),(7,'Crimen y Castigo','Fiodor Dostoyevski',2),(8,'Orgullo y Prejuicio','Jane Austen',4),(9,'Moby Dick','Herman Melville',4),(10,'Hamlet','William Shakespeare',5),(11,'El Alquimista','Paulo Coelho',8),(12,'La Divina Comedia','Dante Alighieri',1),(13,'El Hobbit','J.R.R. Tolkien',5),(14,'Harry Potter 1','J.K. Rowling',8),(15,'Los Juegos del Hambre','Suzanne Collins',5),(16,'El Codigo Da Vinci','Dan Brown',4),(17,'La Sombra del Viento','Carlos Ruiz Zafon',3),(18,'Dracula','Bram Stoker',2),(19,'It','Stephen King',3),(20,'El Resplandor','Stephen King',5);
 /*!40000 ALTER TABLE `libros` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,14 +55,16 @@ CREATE TABLE `prestamos` (
   `id_usuario` int NOT NULL,
   `id_libro` int NOT NULL,
   `fecha_prestamo` date NOT NULL,
+  `fecha_devolucion_esperada` date NOT NULL,
   `fecha_devolucion` date DEFAULT NULL,
   `estado` enum('ACTIVO','DEVUELTO') DEFAULT 'ACTIVO',
+  `multa` decimal(10,2) DEFAULT '0.00',
   PRIMARY KEY (`id_prestamo`),
   KEY `id_usuario` (`id_usuario`),
   KEY `id_libro` (`id_libro`),
   CONSTRAINT `prestamos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`),
   CONSTRAINT `prestamos_ibfk_2` FOREIGN KEY (`id_libro`) REFERENCES `libros` (`id_libro`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +73,7 @@ CREATE TABLE `prestamos` (
 
 LOCK TABLES `prestamos` WRITE;
 /*!40000 ALTER TABLE `prestamos` DISABLE KEYS */;
-INSERT INTO `prestamos` VALUES (1,3,1,'2026-03-01',NULL,'ACTIVO'),(2,4,2,'2026-03-02','2026-03-10','DEVUELTO'),(3,5,3,'2026-03-03',NULL,'ACTIVO'),(4,6,4,'2026-03-04','2026-03-12','DEVUELTO'),(5,7,5,'2026-03-05',NULL,'ACTIVO'),(6,8,6,'2026-03-06',NULL,'ACTIVO'),(7,9,7,'2026-03-07','2026-03-15','DEVUELTO'),(8,10,8,'2026-03-08',NULL,'ACTIVO'),(9,11,9,'2026-03-09',NULL,'ACTIVO'),(10,12,10,'2026-03-10','2026-03-18','DEVUELTO'),(11,13,11,'2026-03-11',NULL,'ACTIVO'),(12,14,12,'2026-03-12',NULL,'ACTIVO'),(13,15,13,'2026-03-13','2026-03-20','DEVUELTO'),(14,16,14,'2026-03-14',NULL,'ACTIVO'),(15,17,15,'2026-03-15',NULL,'ACTIVO'),(16,18,16,'2026-03-16','2026-03-22','DEVUELTO'),(17,19,17,'2026-03-17',NULL,'ACTIVO'),(18,20,18,'2026-03-18',NULL,'ACTIVO'),(19,3,19,'2026-03-19','2026-03-25','DEVUELTO'),(20,4,20,'2026-03-20',NULL,'ACTIVO'),(21,19,1,'2026-04-06',NULL,'ACTIVO');
+INSERT INTO `prestamos` VALUES (1,3,1,'2026-03-01','2026-03-09','2026-04-06','DEVUELTO',0.00),(2,4,2,'2026-03-02','2026-03-10','2026-03-10','DEVUELTO',0.00),(3,5,3,'2026-03-03','2026-03-11','2026-04-07','DEVUELTO',0.00),(4,6,4,'2026-03-04','2026-03-12','2026-03-12','DEVUELTO',0.00),(5,7,5,'2026-03-05','2026-03-13',NULL,'ACTIVO',0.00),(6,8,6,'2026-03-06','2026-03-14',NULL,'ACTIVO',0.00),(7,9,7,'2026-03-07','2026-03-15','2026-03-15','DEVUELTO',0.00),(8,10,8,'2026-03-08','2026-03-16',NULL,'ACTIVO',0.00),(9,11,9,'2026-03-09','2026-03-17','2026-04-07','DEVUELTO',0.00),(10,12,10,'2026-03-10','2026-03-18','2026-03-18','DEVUELTO',0.00),(11,13,11,'2026-03-11','2026-03-19','2026-04-07','DEVUELTO',0.00),(12,14,12,'2026-03-12','2026-03-20',NULL,'ACTIVO',0.00),(13,15,13,'2026-03-13','2026-03-21','2026-03-20','DEVUELTO',0.00),(14,16,14,'2026-03-14','2026-03-22',NULL,'ACTIVO',0.00),(15,17,15,'2026-03-15','2026-03-23',NULL,'ACTIVO',0.00),(16,18,16,'2026-03-16','2026-03-24','2026-03-22','DEVUELTO',0.00),(17,19,17,'2026-03-17','2026-03-25',NULL,'ACTIVO',0.00),(18,20,18,'2026-03-18','2026-03-26',NULL,'ACTIVO',0.00),(19,3,19,'2026-03-19','2026-03-27','2026-03-25','DEVUELTO',0.00),(20,4,20,'2026-03-20','2026-03-28',NULL,'ACTIVO',0.00),(21,19,1,'2026-04-06','2026-04-14','2026-04-07','DEVUELTO',0.00),(22,1,1,'2026-04-06','2026-04-14',NULL,'ACTIVO',0.00),(23,19,3,'2026-04-06','2026-04-14','2026-04-06','DEVUELTO',0.00),(24,1,1,'2026-04-06','2026-04-14',NULL,'ACTIVO',0.00),(25,19,13,'2026-04-07','2026-04-15',NULL,'ACTIVO',0.00),(26,19,2,'2026-04-07','2026-04-15',NULL,'ACTIVO',0.00),(27,21,12,'2026-04-07','2026-04-15',NULL,'ACTIVO',0.00);
 /*!40000 ALTER TABLE `prestamos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +92,7 @@ CREATE TABLE `usuarios` (
   `rol` enum('ADMIN','ESTUDIANTE') DEFAULT 'ESTUDIANTE',
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `correo` (`correo`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +101,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Admin Principal','admin1@correo.com','123456','ADMIN'),(2,'Admin Secundario','admin2@correo.com','123456','ADMIN'),(3,'Juan Perez','juan1@correo.com','123456','ESTUDIANTE'),(4,'Maria Gomez','maria1@correo.com','123456','ESTUDIANTE'),(5,'Carlos Lopez','carlos1@correo.com','123456','ESTUDIANTE'),(6,'Ana Torres','ana1@correo.com','123456','ESTUDIANTE'),(7,'Luis Ramirez','luis1@correo.com','123456','ESTUDIANTE'),(8,'Sofia Martinez','sofia1@correo.com','123456','ESTUDIANTE'),(9,'Pedro Sanchez','pedro1@correo.com','123456','ESTUDIANTE'),(10,'Laura Diaz','laura1@correo.com','123456','ESTUDIANTE'),(11,'Diego Castro','diego1@correo.com','123456','ESTUDIANTE'),(12,'Valentina Rojas','valen1@correo.com','123456','ESTUDIANTE'),(13,'Andres Ruiz','andres1@correo.com','123456','ESTUDIANTE'),(14,'Camila Vargas','camila1@correo.com','123456','ESTUDIANTE'),(15,'Jorge Herrera','jorge1@correo.com','123456','ESTUDIANTE'),(16,'Paula Medina','paula1@correo.com','123456','ESTUDIANTE'),(17,'Ricardo Moreno','ricardo1@correo.com','123456','ESTUDIANTE'),(18,'Daniela Ortiz','daniela1@correo.com','123456','ESTUDIANTE'),(19,'Fernando Silva','fernando1@correo.com','123456','ESTUDIANTE'),(20,'Natalia Reyes','natalia1@correo.com','123456','ESTUDIANTE');
+INSERT INTO `usuarios` VALUES (1,'Admin Principal','admin1@correo.com','123456','ADMIN'),(2,'Admin Secundario','admin2@correo.com','123456','ADMIN'),(3,'Juan Perez','juan1@correo.com','123456','ESTUDIANTE'),(4,'Maria Gomez','maria1@correo.com','123456','ESTUDIANTE'),(5,'Carlos Lopez','carlos1@correo.com','123456','ESTUDIANTE'),(6,'Ana Torres','ana1@correo.com','123456','ESTUDIANTE'),(7,'Luis Ramirez','luis1@correo.com','123456','ESTUDIANTE'),(8,'Sofia Martinez','sofia1@correo.com','123456','ESTUDIANTE'),(9,'Pedro Sanchez','pedro1@correo.com','123456','ESTUDIANTE'),(10,'Laura Diaz','laura1@correo.com','123456','ESTUDIANTE'),(11,'Diego Castro','diego1@correo.com','123456','ESTUDIANTE'),(12,'Valentina Rojas','valen1@correo.com','123456','ESTUDIANTE'),(13,'Andres Ruiz','andres1@correo.com','123456','ESTUDIANTE'),(14,'Camila Vargas','camila1@correo.com','123456','ESTUDIANTE'),(15,'Jorge Herrera','jorge1@correo.com','123456','ESTUDIANTE'),(16,'Paula Medina','paula1@correo.com','123456','ESTUDIANTE'),(17,'Ricardo Moreno','ricardo1@correo.com','123456','ESTUDIANTE'),(18,'Daniela Ortiz','daniela1@correo.com','123456','ESTUDIANTE'),(19,'Fernando Silva','fernando1@correo.com','123456','ESTUDIANTE'),(20,'Natalia Reyes','natalia1@correo.com','123456','ESTUDIANTE'),(21,'Santiago','Santiago603m@gmail.com','Santiago1911s','ESTUDIANTE');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -112,4 +114,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-06  0:33:17
+-- Dump completed on 2026-04-07 11:01:13

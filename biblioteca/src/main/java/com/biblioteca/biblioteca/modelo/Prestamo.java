@@ -8,7 +8,9 @@ public class Prestamo {
     private int idUsuario;
     private int idLibro;
     private Date fechaPrestamo;
+    private Date fechaDevolucionEsperada;
     private Date fechaDevolucion;
+    private double multa;
     private String estado;
     private String nombreUsuario;
     private String tituloLibro;
@@ -16,12 +18,14 @@ public class Prestamo {
     public Prestamo() {
     }
 
-    public Prestamo(int idPrestamo, int idUsuario, int idLibro, Date fechaPrestamo, Date fechaDevolucion, String estado, String nombreUsuario, String tituloLibro) {
+    public Prestamo(int idPrestamo, int idUsuario, int idLibro, Date fechaPrestamo, Date fechaDevolucionEsperada, Date fechaDevolucion, double multa, String estado, String nombreUsuario, String tituloLibro) {
         this.idPrestamo = idPrestamo;
         this.idUsuario = idUsuario;
         this.idLibro = idLibro;
         this.fechaPrestamo = fechaPrestamo;
+        this.fechaDevolucionEsperada = fechaDevolucionEsperada;
         this.fechaDevolucion = fechaDevolucion;
+        this.multa = multa;
         this.estado = estado;
         this.nombreUsuario = nombreUsuario;
         this.tituloLibro = tituloLibro;
@@ -59,12 +63,28 @@ public class Prestamo {
         this.fechaPrestamo = fechaPrestamo;
     }
 
+    public Date getFechaDevolucionEsperada() {
+        return fechaDevolucionEsperada;
+    }
+
+    public void setFechaDevolucionEsperada(Date fechaDevolucionEsperada) {
+        this.fechaDevolucionEsperada = fechaDevolucionEsperada;
+    }
+
     public Date getFechaDevolucion() {
         return fechaDevolucion;
     }
 
     public void setFechaDevolucion(Date fechaDevolucion) {
         this.fechaDevolucion = fechaDevolucion;
+    }
+
+    public double getMulta() {
+        return multa;
+    }
+
+    public void setMulta(double multa) {
+        this.multa = multa;
     }
 
     public String getEstado() {

@@ -1,14 +1,14 @@
-<%@page import="java.util.List"%>
-<%@page import="com.biblioteca.biblioteca.modelo.Prestamo"%>
-<%@page import="com.biblioteca.biblioteca.modelo.Usuario"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@page import="com.biblioteca.biblioteca.modelo.Usuario"%>
+
 <%
     Usuario user = (Usuario) session.getAttribute("user");
     if (user == null) {
         response.sendRedirect(request.getContextPath() + "/login.jsp");
         return;
     }
-    List<Prestamo> prestamos = (List<Prestamo>) request.getAttribute("prestamos");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -18,6 +18,7 @@
         <title>Mis Préstamos — Biblioteca Uniboyacá</title>
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
         <style>
             :root {
                 --gold: #C9A84C;
@@ -30,148 +31,90 @@
                 --border: rgba(201,168,76,0.15);
                 --success: #2ecc71;
                 --danger: #e74c3c;
+                --mora: #ff4444;
             }
-
             * {
                 box-sizing: border-box;
                 margin: 0;
                 padding: 0;
             }
-
             body {
                 font-family: 'Raleway', sans-serif;
                 background: var(--black);
                 color: var(--white);
                 min-height: 100vh;
             }
-
             .page-header {
                 padding: 40px 60px 30px;
                 border-bottom: 1px solid var(--border);
                 background: linear-gradient(180deg, rgba(201,168,76,0.04) 0%, transparent 100%);
             }
-
             .page-header h1 {
                 font-family: 'Cinzel', serif;
                 font-size: 26px;
                 margin-bottom: 6px;
             }
-
             .page-header p {
                 font-size: 12px;
                 color: var(--white-dim);
             }
-
             .main-content {
                 padding: 40px 60px 80px;
             }
-
-            .stats-row {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 16px;
-                margin-bottom: 40px;
-            }
-
-            .stat-card {
-                background: var(--black-card);
-                border: 1px solid var(--border);
-                border-radius: 16px;
-                padding: 24px;
-                display: flex;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .stat-icon {
-                width: 44px;
-                height: 44px;
-                background: rgba(201,168,76,0.08);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: var(--gold);
-            }
-
-            .stat-label {
-                font-size: 10px;
-                color: var(--white-dim);
-                letter-spacing: 1.5px;
-                text-transform: uppercase;
-                margin-bottom: 4px;
-            }
-
-            .stat-value {
-                font-family: 'Cinzel', serif;
-                font-size: 22px;
-                font-weight: 700;
-                color: var(--gold);
-            }
-
             .table-card {
                 background: var(--black-card);
                 border: 1px solid var(--border);
                 border-radius: 20px;
-                overflow: hidden;
+                padding: 24px;
             }
-
-            .table-card-header {
-                padding: 20px 24px;
-                border-bottom: 1px solid var(--border);
+            .dataTables_wrapper {
+                font-family: 'Raleway', sans-serif;
+                color: var(--white);
             }
-
-            .table-card-header h3 {
+            table.dataTable {
+                border-collapse: collapse !important;
+                border: none !important;
+                margin-bottom: 20px !important;
+            }
+            table.dataTable thead th {
+                background: rgba(201,168,76,0.06) !important;
+                color: var(--gold) !important;
                 font-family: 'Cinzel', serif;
+                font-size: 10px !important;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                border-bottom: 1px solid var(--border) !important;
+                padding: 15px !important;
+            }
+            table.dataTable tbody tr {
+                background-color: transparent !important;
+            }
+            table.dataTable tbody td {
+                padding: 16px !important;
                 font-size: 13px;
                 color: var(--white);
-                letter-spacing: 1px;
+                border-bottom: 1px solid rgba(255,255,255,0.05) !important;
             }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
+            .dataTables_filter input {
+                background: var(--black) !important;
+                border: 1px solid var(--border) !important;
+                color: var(--white) !important;
+                border-radius: 8px;
+                padding: 6px 12px;
+                margin-left: 10px;
             }
-
-            thead tr {
-                background: rgba(201,168,76,0.06);
-                border-bottom: 1px solid var(--border);
-            }
-
-            thead th {
-                padding: 14px 20px;
-                font-size: 9px;
-                font-weight: 700;
-                letter-spacing: 2.5px;
-                color: var(--gold);
-                text-transform: uppercase;
-                text-align: left;
-            }
-
-            tbody tr {
-                border-bottom: 1px solid rgba(255,255,255,0.04);
-            }
-
-            td {
-                padding: 16px 20px;
-                font-size: 13px;
-                vertical-align: middle;
-            }
-
-            .td-id {
-                font-family: 'Cinzel', serif;
-                color: var(--gold);
-                font-weight: 600;
-            }
-            .td-book {
-                font-weight: 600;
-            }
-            .td-date {
-                color: var(--white-dim);
+            .dataTables_info, .dataTables_length {
+                color: var(--white-dim) !important;
                 font-size: 12px;
             }
-
+            .dataTables_paginate .paginate_button {
+                color: var(--white-dim) !important;
+            }
+            .dataTables_paginate .paginate_button.current {
+                background: var(--gold) !important;
+                color: #000 !important;
+                border: none !important;
+            }
             .status-badge {
                 display: inline-flex;
                 align-items: center;
@@ -181,33 +124,33 @@
                 font-size: 10px;
                 font-weight: 700;
             }
-
-            .status-active-red {
-                background: rgba(231, 76, 60, 0.1);
-                border: 1px solid rgba(231, 76, 60, 0.25);
-                color: var(--danger);
+            .status-active {
+                background: rgba(201,168,76,0.1);
+                border: 1px solid var(--border);
+                color: var(--gold);
             }
-
-            .status-returned-green {
-                background: rgba(46, 204, 113, 0.1);
-                border: 1px solid rgba(46, 204, 113, 0.25);
+            .status-returned {
+                background: rgba(46,204,113,0.1);
+                border: 1px solid rgba(46,204,113,0.25);
                 color: var(--success);
             }
-
-            .btn-browse {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-                color: #000;
-                text-decoration: none;
-                border-radius: 10px;
-                padding: 12px 24px;
-                font-size: 12px;
-                font-weight: 700;
-                font-family: 'Cinzel', serif;
+            .status-mora {
+                background: rgba(231,76,60,0.1);
+                border: 1px solid rgba(231,76,60,0.25);
+                color: var(--mora);
             }
-
+            .td-id {
+                font-family: 'Cinzel', serif;
+                color: var(--gold);
+                font-weight: 600;
+            }
+            .multa-valor {
+                color: var(--mora);
+                font-weight: 700;
+                display: block;
+                font-size: 12px;
+                margin-top: 4px;
+            }
             .btn-action {
                 width: 34px;
                 height: 34px;
@@ -217,141 +160,112 @@
                 align-items: center;
                 justify-content: center;
                 text-decoration: none;
-                background: transparent;
             }
-
             .btn-return {
                 border-color: rgba(46,204,113,0.3);
                 color: var(--success);
             }
-
-            .empty-state {
-                text-align: center;
-                padding: 80px 20px;
-            }
         </style>
     </head>
     <body>
-
         <jsp:include page="../navbar.jsp" />
-
         <div class="page-header">
-            <h1><i class="fa-solid fa-bookmark" style="color:var(--gold);margin-right:12px;"></i>Mis Préstamos</h1>
-            <p>Historial y estado de tus solicitudes de material bibliográfico</p>
+            <h1><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold);margin-right:12px;"></i>Mis Préstamos</h1>
+            <p>Gestión de deudas y fechas de entrega de la Sinfónica de Nobsa</p>
         </div>
-
         <div class="main-content">
-            <%
-                int total = (prestamos != null) ? prestamos.size() : 0;
-                int activos = 0;
-                if (prestamos != null) {
-                    for (Prestamo p : prestamos) {
-                        if (!"DEVUELTO".equalsIgnoreCase(p.getEstado())) {
-                            activos++;
-                        }
-                    }
-                }
-            %>
-
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-book-bookmark"></i></div>
-                    <div>
-                        <div class="stat-label">Total Préstamos</div>
-                        <div class="stat-value"><%= total%></div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
-                    <div>
-                        <div class="stat-label">Activos</div>
-                        <div class="stat-value"><%= activos%></div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
-                    <div>
-                        <div class="stat-label">Estado</div>
-                        <div class="stat-value" style="font-size:14px;"><%= total > 0 ? "Al día" : "Sin préstamos"%></div>
-                    </div>
-                </div>
-            </div>
-
             <div class="table-card">
-                <div class="table-card-header">
-                    <h3><i class="fa-solid fa-list-check" style="color:var(--gold);margin-right:8px;"></i>Historial de Solicitudes</h3>
-                </div>
-
-                <% if (prestamos != null && !prestamos.isEmpty()) { %>
-                <table>
+                <table id="tablaPrestamos" class="display">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Libro</th>
+                            <th># ID</th>
+                            <th>Material</th>
                             <th>Usuario</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
+                            <th>F. Préstamo</th>
+                            <th>F. Límite</th>
+                            <th>F. Entrega</th>
+                            <th>Estado / Multa</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (Prestamo p : prestamos) {
-                                boolean esDevuelto = "DEVUELTO".equalsIgnoreCase(p.getEstado());
-                        %>
-                        <tr>
-                            <td class="td-id"># Prestamo <%= p.getIdPrestamo()%></td>
-                            <td class="td-book"><%= p.getTituloLibro()%></td>
-                            <td class="td-book"><%= p.getNombreUsuario()%></td>
-                            <td class="td-date"><%= p.getFechaPrestamo()%></td>
-                            <td>
-                                <span class="status-badge <%= esDevuelto ? "status-returned-green" : "status-active-red"%>">
-                                    <i class="fa-solid fa-circle" style="font-size:6px;"></i> <%= p.getEstado()%>
-                                </span>
-                            </td>
-                            <td>
-                                <% if (!esDevuelto) {%>
-                                <a href="<%=request.getContextPath()%>/PrestamoServlet?accion=devolver&id=<%= p.getIdPrestamo()%>"
-                                   class="btn-action btn-return" 
-                                   onclick="confirmarDevolucion(event, this.href)">
-                                    <i class="fa-solid fa-check-double"></i>
-                                </a>
-                                <% } else { %>
-                                <span style="color: var(--white-dim); font-style: italic;">Entregado</span>
-                                <% } %>
-                            </td>
-                        </tr>
-                        <% } %>
+                        <c:forEach var="p" items="${prestamos}">
+                            <tr>
+                                <td class="td-id">#${p.idPrestamo}</td>
+                                <td style="font-weight:600;">${p.tituloLibro}</td>
+                                <td>${p.nombreUsuario}</td>
+                                <td style="color:var(--white-dim);">${p.fechaPrestamo}</td>
+                                <td style="color:var(--gold-light);">${p.fechaDevolucionEsperada}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty p.fechaDevolucion}">
+                                            <span style="color:var(--success);"><i class="fa-solid fa-check"></i> ${p.fechaDevolucion}</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span style="color:var(--white-dim); font-style:italic; font-size:11px;">Pendiente</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <c:set var="claseBadge" value="${p.estado == 'DEVUELTO' ? 'status-returned' : (p.estado == 'MORA' ? 'status-mora' : 'status-active')}" />
+                                    <span class="status-badge ${claseBadge}">
+                                        <i class="fa-solid fa-circle" style="font-size:5px;"></i> ${p.estado}
+                                    </span>
+                                    <c:if test="${p.multa > 0}">
+                                        <span class="multa-valor">
+                                            <fmt:formatNumber value="${p.multa}" type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                                        </span>
+                                    </c:if>
+                                </td>
+                                <td>
+                                    <c:if test="${p.estado != 'DEVUELTO'}">
+                                        <a href="${pageContext.request.contextPath}/PrestamoServlet?accion=devolver&id=${p.idPrestamo}"
+                                           class="btn-action btn-return" 
+                                           onclick="confirmarDevolucion(event, this.href)">
+                                            <i class="fa-solid fa-arrow-rotate-left"></i>
+                                        </a>
+                                    </c:if>
+                                    <c:if test="${p.estado == 'DEVUELTO'}">
+                                        <i class="fa-solid fa-circle-check" style="color:var(--white-dim); opacity:0.3;"></i>
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
-                <% } else {%>
-                <div class="empty-state">
-                    <h3>Sin solicitudes registradas</h3>
-                    <a href="<%=request.getContextPath()%>/LibroServlet?accion=listar" class="btn-browse">Explorar Catálogo</a>
-                </div>
-                <% }%>
             </div>
         </div>
-
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-                                           function confirmarDevolucion(event, url) {
-                                               event.preventDefault();
-                                               Swal.fire({
-                                                   title: '¿Marcar como entregado?',
-                                                   text: "El libro pasará a estado DEVUELTO.",
-                                                   icon: 'question',
-                                                   background: '#111',
-                                                   color: '#F5F0E8',
-                                                   showCancelButton: true,
-                                                   confirmButtonColor: '#2ecc71',
-                                                   cancelButtonColor: '#8A8070',
-                                                   confirmButtonText: 'Sí, confirmar',
-                                                   cancelButtonText: 'Cancelar'
-                                               }).then((result) => {
-                                                   if (result.isConfirmed)
-                                                       window.location.href = url;
+                                               $(document).ready(function () {
+                                                   $('#tablaPrestamos').DataTable({
+                                                       language: {url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'},
+                                                       pageLength: 10,
+                                                       order: [[0, 'desc']],
+                                                       responsive: true,
+                                                       dom: '<"top"f>rt<"bottom"lip><"clear">'
+                                                   });
                                                });
-                                           }
+                                               function confirmarDevolucion(event, url) {
+                                                   event.preventDefault();
+                                                   Swal.fire({
+                                                       title: '¿Confirmar entrega?',
+                                                       text: "Se registrará la devolución en el sistema.",
+                                                       icon: 'question',
+                                                       background: '#111',
+                                                       color: '#F5F0E8',
+                                                       showCancelButton: true,
+                                                       confirmButtonColor: '#C9A84C',
+                                                       cancelButtonColor: '#444',
+                                                       confirmButtonText: 'Sí, confirmar',
+                                                       cancelButtonText: 'Cancelar'
+                                                   }).then((result) => {
+                                                       if (result.isConfirmed)
+                                                           window.location.href = url;
+                                                   });
+                                               }
         </script>
     </body>
 </html>

@@ -459,7 +459,7 @@
                     <div class="stat-icon"><i class="fa-solid fa-server"></i></div>
                     <div>
                         <div class="stat-label">Servidor</div>
-                        <div class="stat-value">Tomcat 10</div>
+                        <div class="stat-value">Tomcat 8.5</div>
                     </div>
                 </div>
                 <div class="stat-box">
