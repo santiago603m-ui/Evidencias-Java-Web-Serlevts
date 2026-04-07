@@ -1,0 +1,11 @@
+com\biblioteca\biblioteca\util\ConexionDB.class
+com\biblioteca\biblioteca\dao\LibroDAO.class
+com\biblioteca\biblioteca\modelo\Libro.class
+com\biblioteca\biblioteca\servlet\PrestamoServlet.class
+com\biblioteca\biblioteca\servlet\LibroServlet.class
+com\biblioteca\biblioteca\modelo\Usuario.class
+com\biblioteca\biblioteca\dao\UsuarioDAO.class
+com\biblioteca\biblioteca\dao\PrestamoDAO.class
+com\biblioteca\biblioteca\filter\AutenticacionFilter.class
+com\biblioteca\biblioteca\modelo\Prestamo.class
+com\biblioteca\biblioteca\servlet\UsuarioServlet.class
